@@ -1,47 +1,60 @@
+// 创建一个立即执行函数，以避免全局变量污染
 !function() {
-    function t() {
-        i(),
-        a()
+    // 初始化一些变量
+    var stars = []; // 存储星星对象的数组
+    var mousePosition = { x: 0, y: 0 }; // 鼠标位置
+    var starColors = ["#FFD700", "#FFA500", "#FF6347", "#FF4500"]; // 星星的颜色
+ 
+    function initialize() {
+        setupEventListeners();
+        animateStars();
     }
-    function i() {
-        document.addEventListener("mousemove", o),
-        document.addEventListener("touchmove", e),
-        document.addEventListener("touchstart", e),
-        window.addEventListener("resize", n)
+ 
+    function setupEventListeners() {
+        // 添加事件监听器
+        document.addEventListener("mousemove", handleMouseMove);
+        window.addEventListener("resize", handleWindowResize);
     }
-    function n(t) {
-        d = document.documentElement.clientWidth,
-        window.innerHeight
+ 
+    function handleWindowResize(event) {
+        // 更新窗口尺寸
+        // 这里可以添加适应窗口大小的逻辑
     }
-    function e(t) {
-        if (t.touches.length > 0)
-            for (var i = 0; i < t.touches.length; i++)
-                s(t.touches[i].clientX, t.touches[i].clientY, r[Math.floor(Math.random() * r.length)])
+ 
+    function handleMouseMove(event) {
+        // 更新鼠标位置
+        mousePosition.x = event.clientX;
+        mousePosition.y = event.clientY;
+        createStar(mousePosition.x, mousePosition.y, starColors[Math.floor(Math.random() * starColors.length)]);
     }
-    function o(t) {
-        f.x = t.clientX,
-        f.y = t.clientY,
-        s(f.x, f.y, r[Math.floor(Math.random() * r.length)])
+ 
+    function createStar(x, y, color) {
+        var star = new Star();
+        star.init(x, y, color);
+        stars.push(star);
     }
-    function s(t, i, n) {
-        var e = new l;
-        e.init(t, i, n),
-        u.push(e)
+ 
+    function updateStars() {
+        // 更新星星的位置
+        for (var i = 0; i < stars.length; i++)
+            stars[i].update();
+        // 删除已经消失的星星
+        for (i = stars.length - 1; i >= 0; i--)
+            if (stars[i].lifeSpan < 0) {
+                stars[i].die();
+                stars.splice(i, 1);
+            }
     }
-    function h() {
-        for (var t = 0; t < u.length; t++)
-            u[t].update();
-        for (t = u.length - 1; t >= 0; t--)
-            u[t].lifeSpan < 0 && (u[t].die(),
-            u.splice(t, 1))
+ 
+    function animateStars() {
+        // 使用 requestAnimationFrame 循环更新星星
+        requestAnimationFrame(animateStars);
+        updateStars();
     }
-    function a() {
-        requestAnimationFrame(a),
-        h()
-    }
-    function l() {
-        this.character = "*",
-        this.lifeSpan = 120,
+ 
+    function Star() {
+        this.character = "*";
+        this.lifeSpan = 120;
         this.initialStyles = {
             position: "fixed",
             top: "0",
@@ -50,46 +63,40 @@
             "z-index": "10000000",
             fontSize: "20px",
             "will-change": "transform"
-        },
-        this.init = function(t, i, n) {
+        };
+ 
+        this.init = function(x, y, color) {
             this.velocity = {
-                x: (Math.random() < .5 ? -1 : 1) * (Math.random() / 2),
+                x: (Math.random() < 0.5 ? -1 : 1) * (Math.random() / 2),
                 y: 1
-            },
+            };
             this.position = {
-                x: t - 10,
-                y: i - 20
-            },
-            this.initialStyles.color = n,
-            this.element = document.createElement("span"),
-            this.element.innerHTML = this.character,
-            c(this.element, this.initialStyles),
-            this.update(),
-            document.body.appendChild(this.element)
-        }
-        ,
+                x: x - 10,
+                y: y - 20
+            };
+            this.initialStyles.color = color;
+            this.element = document.createElement("span");
+            this.element.innerHTML = this.character;
+            applyStyles(this.element, this.initialStyles);
+        };
+ 
         this.update = function() {
-            this.position.x += this.velocity.x,
-            this.position.y += this.velocity.y,
-            this.lifeSpan--,
-            this.element.style.transform = "translate3d(" + this.position.x + "px," + this.position.y + "px,0) scale(" + this.lifeSpan / 120 + ")"
-        }
-        ,
+            // 更新星星的位置和样式
+            // 这里可以添加星星的移动逻辑
+        };
+ 
         this.die = function() {
-            this.element.parentNode.removeChild(this.element)
-        }
+            // 处理星星消失时的逻辑
+        };
     }
-    function c(t, i) {
-        for (var n in i)
-            t.style[n] = i[n]
+ 
+    // 辅助函数：应用样式
+    function applyStyles(element, styles) {
+        for (var prop in styles)
+            element.style[prop] = styles[prop];
+        document.body.appendChild(element);
     }
-    var r = ["#f94a70", "#ffd12b", "#49c99a", "#1f90ed"]
-      , d = document.documentElement.clientWidth
-      , f = (window.innerHeight,
-    {
-        x: d / 2,
-        y: d / 2
-    })
-      , u = [];
-    t()
+ 
+    // 初始化
+    initialize();
 }();
