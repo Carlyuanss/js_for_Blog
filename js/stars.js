@@ -32,8 +32,8 @@
     // 处理鼠标移动事件，为鼠标位置创建星星
     function handleMouseMove(event) {
         var rect = document.body.getBoundingClientRect();
-        var mouseX = event.clientX - rect.left;
-        var mouseY = event.clientY - rect.top;
+        var mouseX = event.clientX - rect.left - window.scrollX;
+        var mouseY = event.clientY - rect.top - window.scrollY;
         for (var i = 0; i < 1; i++) {
             createStar(mouseX, mouseY, getRandomColor());
         }
